@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&display=swap');
+
+body {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 14pt;
+  color: black;
+}
+
+h1 {
+  color: #00A7A0;
+  font-size: 28pt;
+}
+
+h2 {
+  color: #91268F;
+  font-size: 0pt;
+}
+
+h3 {
+  color: #8CC63E;
+  font-size: 16pt;
+}
+
+h4 {
+  color: #F05A28;
+  font-size: 14pt;
+}
+
+h4 {
+  color: #F05A28;
+  font-size: 14pt;
+}
+
+transitionstyle {
+  color: white;
+  font-weight: bold;
+  font-size: 36pt;
+}
+
+slideheadstyle {
+  color: #91268F;
+  font-weight: bold;
+  font-size: 22pt;
+}
+
+figheadstyle {
+  color: #BCBEC0;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+sourcestyle {
+  color: #4C4C4C;
+  font-size: 8pt;
+}
+
+.slide_body_text_sm {
+  margin-top: 5px;
+  font-size: 12pt;
+  color: #4C4C4C;
+}
+
+slides > slide.title-slide hgroup h1 {
+  font-weight: bold;
+  font-size: 36pt;
+  color:white;
+  text-align: left;
+  position: fixed;
+  bottom: 25%;
+  left: 20%;
+}
+
+slides > slide.title-slide hgroup h2 {
+  font-weight: bold;
+  font-size: 24pt;
+  color:white;
+  text-align: left;
+  position: fixed;
+  bottom: 20%;
+  left: 20%;
+}
+
+slides > slide.title-slide hgroup p {
+  font-weight: bold;
+  font-size: 18pt;
+  color:white;
+  text-align: left;
+  position: fixed;
+  bottom: 15%;
+  left: 20%;
+}
+slides>slide.title-slide {
+    background-image: url('X:/DSA/shiny-uploads/trends/rsc-jul21/images/bellevuelakewashington_3.jpg');
+    background-size: 100% 100%;
+}
