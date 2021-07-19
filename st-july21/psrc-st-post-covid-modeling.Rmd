@@ -1,0 +1,397 @@
+---
+title: "Forecasting Post-COVID"
+subtitle: "July 19, 2021"
+output: 
+  ioslides_presentation:
+    widescreen: true
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+
+source("process-data.R")
+psrc.logo <- "X:/DSA/shiny-uploads/trends/st-jul21/images/psrc_logo.png"
+trends.logo <- "X:/DSA/shiny-uploads/trends/st-jul21/images/puget-sound-trends.png"
+
+pop.source <-paste0("Source: https://ofm.wa.gov/sites/default/files/public/dataresearch/pop/april1/ofm_april1_population_final.xlsx")
+job.source <-paste0("Source: https://esd.wa.gov/labormarketinfo/report-library")
+retail.sales.source <- paste0("Source: https://apps.dor.wa.gov/ResearchStats/Content/TaxableRetailSalesLocal/Report.aspx")
+highway.source <- paste0("Source: https://www.wsdot.wa.gov/about/covid-19-transportation-report/dashboard/highway/default.htm")
+psef.source <- paste0("Source: https://economicforecaster.com/")
+
+```
+
+## Overview Slide{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Overview</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+**Part I: Modeling In Uncertain Times**  
+
+  1. Where are we in our “COVID-Recovery”  
+    i) Regional Population  
+    ii) Regional Employment  
+    iii) Retail Sale and Use Taxes  
+    iv) I-5 Traffic Volumes  
+    V) Comparison to Other Recessions 
+  2. How we are addressing uncertainty in forecasts?    
+    i) Regional Transportation Plan "What-If's"  
+    ii) Return to Work scenarios with UW  
+  3. Communicating Forecast Reliability and Uncertainty   
+  
+**Part II: Diverse Data**  
+
+  1. Data Sources  
+    i) Census  
+    ii) Local Surveys  
+  2. Techniques to Reach Under-Represented groups in Surveys  
+  3. Making racial equity central to our performance metrics  
+
+After this conversation, if you want to talk more reach out to me at chelmann@psrc.org
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Part #1a {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/covid-mural.jpg data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:10%;">
+<transitionstyle>Where are we in our “COVID-Recovery”?</transitionstyle>
+</div>
+
+
+## Region Population{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Annual Population Change: April to April</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+The central Puget Sound region continued to grow despite a global pandemic in 2020. The pandemic affected the rate of change for both natural population increase as well as increases due to migration. <br><br><br>
+
+<div style="float: left; width: 30%;">
+* The four counties added approximately 39,000 people between April 1st 2020 and April 1st 2021
+* The last time the region added under 50,000 people in a year was 2013
+* Growth was equally divided between Migration and Natural changes in 2020 - a noticeable difference from the past seven years
+</div> 
+
+<div style="float: right; width: 70%;">
+`r region.pop.change.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r pop.source`</sourcestyle></div>
+
+## Region Jobs{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Wage & Salary Employment: May to May</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Employment in the central Puget Sound region continues to recover from the impacts of the global pandemic.<br><br><br>
+
+<div style="float: left; width: 30%;">
+* In May of 2020 at the height of the pandemic job losses, regional employment was 1.95M - a level of employment last seen in the region in 2014
+* In May of 2021, regional employment was 2.1M - still below 2019 and similar to employment levels in 2017 
+</div> 
+
+<div style="float: right; width: 70%;">
+`r region.job.total.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r job.source`</sourcestyle></div>
+
+## Retail Sales{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Retail Sales: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+By the fourth quarter of 2020, retail sales and use taxes for the entire region rebounded to similar levels from the 4th quarter of 2019.<br><br><br>
+
+<div style="float: left; width: 100%;">
+`r region.salestax.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r retail.sales.source`</sourcestyle></div>
+
+## Retail Sales by City{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Retail Sales: Jursidiction</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Not all cities have fared equally in the pandemic induced recession. As shown below, places like Seattle and Bellevue were still about 90% of pre-covid sales and use tax levels in the 4th quarter of 2020 wereas places like Kenmore were up almost 35% compared to the 4th quarter of 2019.<br><br>
+
+<div style="float: left; width: 90%;">
+`r city.salestax.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r retail.sales.source`</sourcestyle></div>
+
+## I-5{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Total Volumes on North I-5</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Overall usage on I-5 north of the Ship Canal bridge for the first seven months of 2021 is `r toString(round(i5.share.21*100, 0))`% of the total volumes from 2019. <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r i5.traffic.volumes.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r highway.source`</sourcestyle></div>
+
+## Forecasted Recovery{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Comparison to Other Recessions</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+There is more economic data pointing to a "V" shaped recovery from the COVID-19 induced recession. This recovery is looking to be significantly shorter than the past two recessions the region has experienced over the past twenty years and the length is looking more like a "normal business cycle" despite the impacts in the present being anything but normal.  <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r recession.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r psef.source`</sourcestyle></div>
+
+## Part #1b {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/20161206_psrc_aer_0646-2.jpg data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:10%;">
+<transitionstyle>How we are addressing uncertainty?</transitionstyle>
+</div>
+
+## RTP Analysis{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Regional Transportation Plan: What If's</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Long-term impacts from COVID are still difficult to understand - we are still in the midst of the recovery. For the technical analysis in the RTP, we are performing several "What If's" to understand what impacts various changes in behavior or transportation supply would have on high level metrics.
+
+**Example Sensitivity Tests**  
+  * Increased Share of Telework  
+  * Reduced Transit Service  
+  * Reduced Fares  
+  * Increased access to High Capacity Transit  
+  * Decreased travel times (increased reliability) of Bus Rapid Transit  
+  
+These "tests" were all run on our existing model and we summarized high level changes in travel behavior. We also plan to run a few of these "tests" on the future network when they are ready. These "tests" can be used to help us understand and explain various sensitivities that the inputs can have on model outputs.
+    
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## UW Analysis{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Other Regional Analysis</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Several other agencies are involved in various "What Ifs". These work products range from surveys to modeling approaches aimed at understanding how the future might be different. A few examples include:
+
+**UW Return to Work Scenarios**  
+This effort involves students and faculty from the UW Civil Engineering program, King County Metro, Challenge Seattle and PSRC staff. It involves several "What If's" that were generated through direct adjustment to person demand in the PSRC Soundcast model. The approach is:
+  
+  1. Use results from various UW COVID related survey's to estimate near term travel demand scenarios.  
+  2. UW students make changes to the person trip records for various people, geographies, modes, etc  
+  3. PSRC re-generates trip tables from adjusted trip records and re-assign the trips by mode  
+  4. Outputs for various transportation metrics are generated and analyzed for variious modes, geogrpahies, time of day, etc.  
+  
+**Survey's of COVID-19 Impacts on long-term travel behavior**
+Several universities have been doing various levels of surveys on covid impacts to travel behavior and are attempting to build various models to impact the impacts on long term trends. A few examples of surveys that PSRC staff are aware of include:
+
+  1. University of Washington efforts: <https://www.washington.edu/news/tag/covid-19-studies/>
+  2. Arizona State University & University of Illinois Chicago <https://covidfuture.org/>
+  
+Surveys will be key to understanding the long term impacts on travel behavior but unfortunately we can't say much yet - the next 5 years will be telling to what the future holds (remember all the talk about how autonomous vehicles would be the death of transit just 3 or 4 years ago?)
+
+## Part #1c {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/slide-displacementrisk.png data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:10%;">
+<transitionstyle>How are we communicating uncertainty?</transitionstyle>
+</div>
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## PSRC Communication{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>What is PSRC saying about our forecasts?</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Our current forecasts were produced before the pandemic and do not make any adjustments for its potential impacts - can you trust them? When is PSRC going to update them to reflect a world post-pandemic? <br><br>
+
+**We plan to update our regional forecasts in late 2022 to early 2023. Before that time, here are a few things to keep in mind:**  
+
+Impacts could manifest in many ways that are still uncertain: <br><br> 
+  * What will be the shape and duration of any economic recovery?  
+  * What fundamental long-term economic changes will emerge?    
+  * What behavioral changes will remain?    
+
+It is very difficult to project/quantity these changes with any confidence on what those impacts could be. There are many theories, but we really need data both before and after pandemic conditions to recognize in how things change to build/update forecast models. <br><br>
+
+**Asserting scenarios and running sensitivity tests can help inform decisions in the meantime**.  
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Part #1d {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/storefront_0.jpg data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:30%;">
+<transitionstyle>Discussion</transitionstyle>
+</div>
+
+## EVLE Modeling{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>What about forecasts for Everett Link Extension?</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+We don't currently have updated post-covid assumptions so you are limited in what you can change or update. <br><br>
+
+Modeling Considerations:  
+  * Use the forecast tool you have in hand and consider using ranges of ridership for your analysis  
+  * Consider using your existing stations and their access modes to inform the range of access at your planned stations  
+    
+For further coordination on modeling assumptions for the Everett Link Extension, please work with **Stefan Coe** (scoe@psrc.org) and **Craig Helmann** (chelmann@psrc.org) at PSRC.
+  
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+
+## Part #2a {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/slide-demoprofile.png data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:75%;">
+<transitionstyle>Diverse Data</transitionstyle>
+</div>
+
+## What Data Exists{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Where do you find Diverse Data?</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Once you get beyond the institutional challenges of trying to lead with Race, the very next hurdle you encounter is the availability of data. At PSRC, we rely on the following data sources to understand the difference in outcomes that exist for people of color in the region. <br><br>
+
+  * Census Data  
+  * Regional Household Travel Survey  
+  * "Panel" purchases on specific topics
+    
+Census Data continues to offer the greatest amount of data by Race of all available datasets. PSRC is working on ways to increase the respone rate from people of color in current and future surveys but for historical data, it is difficult to get beyond Census data.
+  
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Census Data{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Using Census Data</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Census Data is readily available and despite its limits is still the largest source of data by race that is available for use by organizations like ours. At PSRC, we continue to work on tools to automate the processing and visualization of Census Data. When combined with other data sources from HUD, travel models and other surveys, we can use Census Data to better understand racial disparities in our own communities.  <br><br>
+
+Some examples of PSRC products that combine Census Data with other data products include:  
+  * [Demographic Profile](https://www.psrc.org/sites/default/files/demographicprofile.pdf)  
+  * [Displacement Risk Mapping](https://www.psrc.org/displacement-risk-mapping)  
+  * [Opportunity Mapping](https://www.psrc.org/opportunity-mapping)  <br><br>
+    
+As noted previously, Census Data offers the greatest amount of data by Race and when combined with other datasets and used in interactive ways, it can be extremely useful.
+  
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Survey Data{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Local Surveys</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Although Census Data is useful, it can be lacking for specific behavioral questions we are interested in understanding. At PSRC, we conduct lots of different surveys and more recently these surveys have been focused on understanding differences in responses by race. The **Household Travel Survey** is likely the most recognized product that PSRC offers but we have performed lots more surveys on a variety of topics.  <br><br>
+
+Some examples of PSRC surveys include:  
+  * [Household Travel Survey Program](https://www.psrc.org/household-travel-survey-program)  
+  * [COVID-19 Mobility Survey](https://www.psrc.org/covid-19-mobility-survey)  
+  * [Future of Transpotation survey](https://engage.psrc.org/regional-transportation-plan)  <br><br>
+    
+With local surveys, we can ask the questions that we are interested in answering and work to ensure that the survey reaches a diverse audience. Unfortunately, we haven't always asked simple questions like race in our surveys, so historical data by race is difficult to find in local surveys but more and more current data is being collected and analyzed so that we can do better moving forward.
+  
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Part #2b {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/josh_email_header_800x403.jpg data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:10%;">
+<transitionstyle>Techniques to reach more people</transitionstyle>
+</div>
+
+## Outreach{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>How do we get more Diversity in Surveys?</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Although surveys are useful, they can be challenging to use when the majority or responses come from wealthy white people and retirees with lots of time on their hands.   <br><br>
+
+Some examples of PSRC techniques used to increase response diversity include:  
+  * Updated incentives  
+  * Panels  
+  * Distribution through local organizations  
+  * Oversampling for people of color (similar to past practices with zero-car households, transit users, etc.)  
+  * Partnering with others to increase resources<br><br>
+    
+We have found that we need to do all these items to get enough responses to understand differences in response by race. We have committed more resources to our current survey to do this as well as our 2023 survey but we can always do better - if you ever want to partner on the survey just let us know! 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Part #2c {data-background=X:/DSA/shiny-uploads/trends/st-jul21/images/mopop-playground.jpg data-background-size=cover}
+
+<div style="position:absolute; top:20%; left:10%;">
+<transitionstyle>Race & Performance Metrics </transitionstyle>
+</div>
+
+## Measure{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>You Measure what Matters</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+PSRC is actively working to make race central to our performance metrics in the work we do. There are various approaches we are taking in the near and long term to advance racial equity in our planning at PSRC.   <br><br>
+
+Near Term Efforts:  
+  * Use of Geography to highlight areas of impact    
+  * Integrating race in as many measures as possible  
+  * Developing tools like an **Equity Dashboard** that brings together diverse data into one easy to find place  
+  * Always asking if we can highlight racial disparities in whatever data we are generating <br><br>
+
+Long Term Efforts:  
+  * Adding Race variables to our forecasting tools  
+  
+We are also doing lots of different things to increase outreach to everyone - if you have any questions on those efforts please reach out to me (chelmann@psrc.org) and I am happy to connect you with the right people at PSRC for you to talk with! 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+
+## Questions {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/rhs-slide-2400x800.jpg data-background-size=cover}
+
+<div style="position:absolute; top:85%; left:5%;">
+<transitionstyle>Questions? chelmann@psrc.org</transitionstyle>
+</div>
