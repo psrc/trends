@@ -4,7 +4,7 @@ author: "Chicago Title"
 date: "October 7, 2021"
 output: 
   powerpoint_presentation:
-    reference_doc: trends-psrc-template.pptx
+    reference_doc: X:\\DSA\\shiny-uploads\\trends\\chicago-title\\trends-psrc-template.pptx
 always_allow_html: yes
 ---
 
