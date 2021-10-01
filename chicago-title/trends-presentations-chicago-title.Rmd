@@ -1,0 +1,277 @@
+---
+title: "Puget Sound Trends"
+author: "Chicago Title"
+date: "October 7, 2021"
+output: 
+  powerpoint_presentation:
+    reference_doc: trends-psrc-template.pptx
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+
+library(knitr)
+
+source("process_data.R")
+
+```
+
+## We are a growing region
+
+![](X:\\DSA\\shiny-uploads\\trends\\chicago-title\\images\\vision-2050-growth.png){width=50%}  
+
+## The Region is still growing despite a Global Pandemic
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Between April 1st, `r max.year-1` and April 1st, `r max.year`, the Puget Sound Region grew by approximately `r format(region.pop.change, nsmall=0, big.mark=",")` people. Approximately `r region.pop.change.migration`% of the growth in population in `r max.year` was from people migrating to the region.
+
+- In `r region.pop.change.max.year`, the region added approximately `r format(region.pop.change.max, nsmall=0, big.mark=",")` people, one of the fastest growing years ever. In that year, approximately `r region.pop.change.max.migration`% of the growth was from people migrating to the region.
+
+- Regional population growth in `r max.year` returned to levels last experinced in `r region.pop.change.similar.year`
+
+:::
+::: {.column}
+```{r pop-components-chart, echo=FALSE}
+region.pop.change.chart
+```
+:::
+::::::::::::::
+
+## County Population Growth
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Between 2015 and `r max.year`, King County has grown by `r format(king.delta, nsmall=0, big.mark=",")` people, a `r king.delta.percent`% increase. This growth accounts for approximately `r king.shr`% of the total population growth for the region.
+
+- Between 2015 and `r max.year`, Pierce County has grown by `r format(pierce.delta, nsmall=0, big.mark=",")` people, a `r pierce.delta.percent`% increase.
+
+- Between 2015 and `r max.year`, Snohomish County has grown by `r format(snohomish.delta, nsmall=0, big.mark=",")` people, a `r snohomish.delta.percent`% increase.
+
+:::
+::: {.column}
+```{r county-pop-chart, echo=FALSE}
+county.pop.change.chart
+```
+:::
+::::::::::::::
+
+## Population Growth in our Major Cities
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Between 2015 and `r max.year`, the City of Seattle has grown by `r format(seattle.delta, nsmall=0, big.mark=",")` people. This growth accounts for approximately `r seattle.shr`% of the population growth for King County.
+
+- Population growth in Pierce (`r format(pierce.delta, nsmall=0, big.mark=",")`) and Snohomish (`r format(snohomish.delta, nsmall=0, big.mark=",")`) counties were all less than the population growth for the City of Seattle.
+
+- The cities of Bellevue, Redmond and Seattle have accounted for approximately `r brs.shr`% of the population growth for King County since 2015.
+
+:::
+::: {.column}
+```{r city-pop-chart, echo=FALSE}
+city.pop.change.chart
+```
+:::
+::::::::::::::
+
+
+## Housing Production has been increasing steadily
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Between April 1st, `r max.year-1` and April 1st, `r max.year`, the Puget Sound Region added approximately `r format(hu.2021.sy, nsmall=0, big.mark=",")` new housing units. Of these new units, approximately `r mf.shr.sy`% were multi-family.
+
+- Multi-family housing unit construction has accounted for approximately `r mf.shr.my`% of all new housing unit production since 2015.
+
+:::
+::: {.column}
+```{r hu-change-chart, echo=FALSE}
+region.hu.chart
+```
+:::
+::::::::::::::
+
+## County Housing Unit Growth
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Between 2015 and `r max.year`, King County has added `r format(round(king.hu.delta,-2), nsmall=0, big.mark=",")` housing units, a `r king.hu.delta.percent`% increase. This growth accounts for approximately `r king.hu.shr`% of the total housing unit production for the region.
+
+- Between 2015 and `r max.year`, Pierce County has added `r format(round(pierce.hu.delta,-2), nsmall=0, big.mark=",")` housing units, a `r pierce.hu.delta.percent`% increase.
+
+- Between 2015 and `r max.year`, Snohomish County has added `r format(round(snohomish.hu.delta,-2), nsmall=0, big.mark=",")` housing units, a `r snohomish.hu.delta.percent`% increase.
+:::
+::: {.column}
+```{r county-hu-chart, echo=FALSE}
+county.hu.change.chart
+```
+:::
+::::::::::::::
+
+## Housing Unit Growth in our Major Cities
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Between 2015 and `r max.year`, the City of Seattle has added `r format(round(seattle.hu.delta,-2), nsmall=0, big.mark=",")` housing units. This growth accounts for approximately `r seattle.hu.shr`% of the housing unit growth for King County.
+
+- Housing unit growth in Pierce (`r format(round(pierce.hu.delta,-2), nsmall=0, big.mark=",")`) and Snohomish (`r format(round(snohomish.hu.delta,-2), nsmall=0, big.mark=",")`) counties were all less than the housing unit change for the City of Seattle.
+
+- The cities of Bellevue, Redmond and Seattle have accounted for approximately `r brs.hu.shr`% of the housing growth for King County since 2015.
+
+:::
+::: {.column}
+```{r city-hu-chart, echo=FALSE}
+city.hu.change.chart
+```
+:::
+::::::::::::::
+
+
+## Median Home Sales Price
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- By the end of August, the median home sales price in the Seattle MSA exceeded $730,0000
+
+- Median prices have been increasing at a faster rate during the pandemic and have reached all time highs in the region.
+
+:::
+::: {.column}
+```{r median-home-cost-chart, echo=FALSE}
+region.mediansales.chart
+```
+:::
+::::::::::::::
+
+## Inventory is helping drive Cost
+
+:::::::::::::: {.columns}
+::: {.column}
+```{r home-sales-chart, echo=FALSE}
+region.homesales.chart
+```
+:::
+::: {.column}
+```{r home-inventory-chart, echo=FALSE}
+region.homeinventory.chart
+```
+:::
+::::::::::::::
+
+## Median Monthly Rent
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- By the end of August, the median rental cost in the Seattle MSA exceeded $2000 per month
+
+- After an initial decline in rental prices early in the pandemic, costs have increased over the first 8 months of 2021.
+
+:::
+::: {.column}
+```{r rental-cost-chart, echo=FALSE}
+region.rentals.chart
+```
+:::
+::::::::::::::
+
+## Job recovery is on-going
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- `r region.jobs.lowest.mo.2020` of 2020 was the height of the pandemic job losses and regional employment had dropped to `r format(round(region.jobs.lowest.2020,-3), nsmall=0, big.mark=",")` jobs. This level of regional employment was last seen in the region in `r month(ymd(region.jobs.change.similar.date),label=TRUE, abbr=FALSE)` of `r year(ymd(region.jobs.change.similar.date))`.
+
+- In `r latest.jobs.month` of `r max.year`, total regional employment was `r format(round(region.jobs.latest.mo.2021,-3), nsmall=0, big.mark=",")`. This compares to `r format(round(region.jobs.latest.mo.2019,-3), nsmall=0, big.mark=",")` in `r latest.jobs.month` of 2019, a `r 100-region.jobs.latest.mo.ratio.2021`% reduction from pre-pandemic levels. This level of regional employment was last seen in the region in `r month(ymd(region.jobs.change.similar.date.2021),label=TRUE, abbr=FALSE)` of `r year(ymd(region.jobs.change.similar.date.2021))`.
+
+- Job trends in the Puget Sound Region mirror those of the entire state and the region continues to account for approximately `r region.state.jobs.latest.mo.ratio.2021`% of total employment in Washington State.
+
+:::
+::: {.column}
+```{r total-jobs-chart, echo=FALSE}
+total.jobs.chart
+```
+:::
+::::::::::::::
+
+## Not all industries were impacted similarly by the Pandemic 
+:::::::::::::: {.columns}
+::: {.column}
+
+- Manufacturing jobs - especially aerospace - have been hard hit by pandemic reductions in travel. In `r latest.jobs.month` of `r max.year`, regional manufacturing related jobs were down `r format(manufacturing.delta, nsmall=0, big.mark=",")` jobs (`r manufacturing.delta.percent`%) from 2019 levels.
+
+- The leisure and hospitality suffered the greatest overall reductions in jobs in 2020 - losing approximately `r format(leisure.delta.2020, nsmall=0, big.mark=",")` jobs in 2020 at the height of the pandemic. Although job growth has returned in 2021, the leisure and hospitality sector is still approximately `r format(leisure.delta.2021, nsmall=0, big.mark=",")` jobs below 2019 levels (`r leisure.delta.percent`%).
+
+:::
+::: {.column}
+```{r sector-jobs-chart, echo=FALSE}
+jobs.by.sector.chart
+```
+:::
+::::::::::::::
+
+## Initial Unemployment Claims: Gender & Race
+:::::::::::::: {.columns}
+::: {.column}
+
+Initial unemployment claims are any claims that are initiated for benefits by a worker. If the same worker files an initial claim, returns to work and is laid off again and re-applies for benefits a second time, this would count as two initial unemployment claims. 
+
+- The share of initial unemployment claims for African Americans and Native Hawaiian and Pacific Islanders are higher than any other race or ethnicity.
+
+- Rates of unemployment claims by gender are similar over the pandemic.
+
+:::
+::: {.column}
+```{r ue-claims-race-chart, echo=FALSE}
+initial.claims.share.race.chart
+```
+:::
+::::::::::::::
+
+## Initial Unemployment Claims: Age & Educational Attainment
+:::::::::::::: {.columns}
+::: {.column}
+
+Initial unemployment claims are any claims that are initiated for benefits by a worker. If the same worker files an initial claim, returns to work and is laid off again and re-applies for benefits a second time, this would count as two initial unemployment claims. 
+
+- A higher share of workers without a 4-yr college degree have filed for initial unemployment claims.
+
+- The youngest workers have experienced some of the highest shares of unemployment.
+
+:::
+::: {.column}
+```{r ue-claims-age-chart, echo=FALSE}
+initial.claims.share.age.chart
+```
+:::
+::::::::::::::
+
+## SeaTac Airport
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Approximately `r format(latest.seatac.screenings.2021, nsmall=0, big.mark=",")` passengers per day were screened at SeaTac airport during the week of `r paste0(latest.seatac.month," ",latest.seatac.day,"th")`, 2021. This was up from approximately `r format(latest.seatac.screenings.2020, nsmall=0, big.mark=",")` daily passenger screenings in 2020 but still approximately `r latest.seatac.screenings.ratio`% below the average for the same week of 2019.
+
+- The lowest passenger screenings during the pandemic occurred the week of `r paste0(minimum.seatac.month," ",minimum.seatac.day,"th")`, 2020 when approximately `r format(minimum.seatac.screenings, nsmall=0, big.mark=",")` daily passengers were screened at the airport.
+
+- Since late winter 2021, the seasonal variations for airport passengers have mirrored previous trends.
+
+:::
+::: {.column}
+```{r seatac-chart, echo=FALSE}
+seatac.chart
+```
+:::
+::::::::::::::
+
+
+# Questions? \n jbrown@psrc.org
+

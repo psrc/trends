@@ -1,0 +1,391 @@
+---
+title: "Puget Sound Trends"
+subtitle: "September 3, 2021"
+output: 
+  ioslides_presentation:
+    widescreen: true
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+
+source("process-data.R")
+psrc.logo <- "X:/DSA/shiny-uploads/trends/rsc-jul21/images/psrc_logo.png"
+trends.logo <- "X:/DSA/shiny-uploads/trends/rsc-jul21/images/puget-sound-trends.png"
+
+pop.source <-paste0("Source: https://ofm.wa.gov/sites/default/files/public/dataresearch/pop/april1/ofm_april1_population_final.xlsx")
+job.source <-paste0("Source: https://esd.wa.gov/labormarketinfo/report-library")
+unemployment.initial.source <-paste0("Source: https://esdorchardstorage.blob.core.windows.net/esdwa/Default/ESDWAGOV/newsroom/Statistics/wkly-initial-claims-count-table.pdf")
+retail.sales.source <- paste0("Source: https://apps.dor.wa.gov/ResearchStats/Content/TaxableRetailSalesLocal/Report.aspx")
+home.sales.source <- paste0("Source: https://www.redfin.com/news/data-center/")
+rental.source <- paste0("Source: https://www.zillow.com/research/data/")
+housing.source <- paste0("Source: https://ofm.wa.gov/sites/default/files/public/dataresearch/pop/april1/hseries/ofm_april1_postcensal_estimates_housing_1980_1990-present.xlsx")
+transit.source <- paste0("Source: https://www.transit.dot.gov/ntd/data-product/monthly-module-raw-data-release")
+highway.source <- paste0("Source: https://www.wsdot.wa.gov/about/covid-19-transportation-report/dashboard/highway/default.htm")
+truck.source <- paste0("Source: https://www.wsdot.wa.gov/about/covid-19-transportation-report/dashboard/freight/default.htm")
+ferry.source <- paste0("Source: https://www.wsdot.wa.gov/about/covid-19-transportation-report/dashboard/ferries/default.htm")
+
+```
+
+## Overview Slide{}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>2021 Data Trends</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Today's presentation will cover a variety of trends on:
+
+  1. Population
+  2. Employment
+  3. Unemployment
+  4. Housing Supply and Cost
+  5. Retail Sales
+  6. Transportation Usage
+
+For more information on trends that PSRC generates, please visit <https://www.psrc.org/puget-sound-trends>
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Population {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/slide-uw-equity_0.png data-background-size=cover}
+
+<div style="position:absolute; top:50%; left:25%;">
+<transitionstyle>Population</transitionstyle>
+</div>
+
+
+## Region Population{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Components of Population Change: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+The central Puget Sound region continued to grow despite a global pandemic in 2020. The pandemic affected the rate of change for both natural population increase as well as increases due to migration. <br><br><br>
+
+<div style="float: left; width: 30%;">
+* The four counties added approximately 39,000 people in 2020
+* The last time the region added under 50,000 people in a year was 2013
+* Growth was equally divided between Migration and Natural changes in 2020 - a noticeable difference from the past seven years
+</div> 
+
+<div style="float: right; width: 70%;">
+`r region.pop.change.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r pop.source`</sourcestyle></div>
+
+## Jobs {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/everett_1.jpg data-background-size=cover}
+
+<div style="position:absolute; top:25%; left:25%;">
+<transitionstyle>Jobs</transitionstyle>
+</div>
+
+## Region Jobs Total{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Wage & Salary Employment: Region Total for July</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Employment in the central Puget Sound region continues to recover from the impacts of the global pandemic.<br><br><br>
+
+<div style="float: left; width: 30%;">
+* In May of 2020 at the height of the pandemic job losses, regional employment was 1.95M - a level of employment last seen in the region in 2014
+* In July of 2021, regional employment was 2.1M - still about 90k jobs below 2019 and similar to employment levels in 2017 
+</div> 
+
+<div style="float: right; width: 70%;">
+`r region.job.total.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r job.source`</sourcestyle></div>
+
+## Region Jobs Monthly Change{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Wage & Salary Employment: Monthly Change</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+With the exception of December 2020, monthly job changes have trended positive since May 2020. The largest job losses occurred in April 2020 when more than 240,000 jobs were removed from the economy.<br><br><br>
+
+<div style="float: left; width: 100%;">
+`r region.job.change.monthly.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r job.source`</sourcestyle></div>
+
+## Unemployment Changes{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Unemployment Claims: Initial Claims</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Initial Weekly unemployment claims hovered near 10k a week in the spring of 2021 and lowered to around 5k a week in July and August - far below the 30k per week averages from the spring of 2020 and more inline with pre-pandemic levels.<br><br><br>
+
+<div style="float: left; width: 100%;">
+`r initial.claims.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r unemployment.initial.source`</sourcestyle></div>
+
+## Unemployment by Race{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Unemployment Claims: Continuing Claims by Race</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Unemployment rates continue to vary by race/ethnicity. Early in the pandemic, the unemployment rate was over 17% for African American workers. By July of 2021, the unemployment rate for African American workers was 3.5%, far lower than early in the pandemic but still over twice the rate for White workers (1.5%). Native Hawaiian/Pacific Islanders had the highest unemployment in July 2021 of approximately 5%.  <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r continuing.claims.race.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r unemployment.initial.source`</sourcestyle></div>
+
+
+## Home Sale {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/redmond-housing.jpg data-background-size=cover}
+
+<div style="position:absolute; top:85%; left:35%;">
+<transitionstyle>Housing</transitionstyle>
+</div>
+
+## Annual Housing Supply{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Annual Housing Unit Change: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Between April 2020 and April 2021, more than 26,000 housing units were added to the region. Of these new additions, over 71% were multi-family.  <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r region.housing.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r housing.source`</sourcestyle></div>
+
+## Monthly Median Sales Price{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Median Home Price: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+In July 2021, the median sales price for a home in the Seattle Metro Region was over $749,000 - an all-time high for the region and up from $585,000 in May 2020. <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r region.mediansales.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r home.sales.source`</sourcestyle></div>
+
+## Monthly Sales Inventory{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Monthly Home Sales and Inventory: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+The lack of inventory is a key driver in the rapid increase in median sales price. <br><br><br>
+
+<div style="float: left; width: 50%;">
+`r region.homesales.chart`
+</div> 
+
+<div style="float: right; width: 50%;">
+`r region.homeinventory.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r home.sales.source`</sourcestyle></div>
+
+## Monthly Rental Price{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Median Monthly Rents: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+In July 2021, the median rent for a home or apartment in the Seattle Metro Region was around $1950. The average rental cost is lower from previous record highs in early 2020 but has begun to slowly increase in the summer of 2021. <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r region.rentals.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r rental.source`</sourcestyle></div>
+
+## Retail Sale {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/sr161puyallup.jpg data-background-size=cover}
+
+<div style="position:absolute; top:25%; left:35%;">
+<transitionstyle>Retail Sales</transitionstyle>
+</div>
+
+## Quarterly Retail Sales{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Retail Sales: Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+By the first quarter of 2021, retail sales and use taxes for the entire region rebounded to levels slightly above the 1st quarter of 2019.<br><br><br>
+
+<div style="float: left; width: 100%;">
+`r region.salestax.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r retail.sales.source`</sourcestyle></div>
+
+## Quarterly Retail Sales by City{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Retail Sales: Jursidiction</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Not all cities have fared equally in the pandemic induced recession but most cities rebounded to 1st quarter retail sales levels from 2019. The city of SeaTac continued to be one of the hardest hit cities due to reduction in airport travel. <br><br>
+
+<div style="float: left; width: 90%;">
+`r city.salestax.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r retail.sales.source`</sourcestyle></div>
+
+## Transit {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/ct_bus.jpg data-background-size=cover}
+
+<div style="position:absolute; top:75%; left:45%;">
+<transitionstyle>Transportation Trends</transitionstyle>
+</div>
+
+## Year to Date Transit{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Transit Boardings by Mode & Operator: January to June</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Overall transit boardings for the first six months of 2021 are down almost 65% across all agencies and modes compared to 2019. <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r transit.by.agency.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r transit.source`</sourcestyle></div>
+
+## I-5 and I-405 Vehicles{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Total Volumes: I-5 and I-405</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Overall usage on I-5 and I-405 in the PSRC region for the first eight months of 2021 is `r toString(round(i5.i405.share.21*100, 0))`% of the total volumes from 2019. <br><br><br>
+
+<div style="float: left; width: 50%;">
+`r i5.traffic.volumes.chart`
+</div> 
+
+<div style="float: right; width: 50%;">
+`r i405.traffic.volumes.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r highway.source`</sourcestyle></div>
+
+## Other Highways Vehicles{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Total Volumes: Other Highways</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Overall usage on I-90 and SR 520 for the first eight months of 2021 is `r toString(round(crosslake.share.21*100, 0))`% of the total volumes from 2019. On SR 167, SR 410 and SR 512 the usage in 2021 is `r toString(round(other.share.21*100, 0))`% of the total volumes from 2019. <br><br><br>
+
+<div style="float: left; width: 50%;">
+`r crosslake.traffic.volumes.chart`
+</div> 
+
+<div style="float: right; width: 50%;">
+`r sr.traffic.volumes.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r highway.source`</sourcestyle></div>
+
+## I-5 and I-405 Trucks{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Truck Volumes: I-5 and I-405</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Trucks volumes on I-5 and I-405 in the PSRC region for the first eight months of 2021 range from 70% to 100% of the truck volumes from 2019. The highest shares of truck 2019 truck volumes are on locations in Pierce County and the lowest shares are in Snohomish County.<br><br><br>
+
+<div style="float: left; width: 50%;">
+`r i5.truck.volumes.chart`
+</div> 
+
+<div style="float: right; width: 50%;">
+`r i405.truck.volumes.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r truck.source`</sourcestyle></div>
+
+## Other Highways Trucks{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Truck Volumes: Other Highways</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Overall truck usage on I-90, SR 16, SR 167, SR 410 and SR 512 in 2021 has also ranged from 70% to 100% of the truck volumes on the network from 2019. <br><br><br>
+
+<div style="float: left; width: 50%;">
+`r crosslake.truck.volumes.chart`
+</div> 
+
+<div style="float: right; width: 50%;">
+`r sr.truck.volumes.chart`
+</div> 
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r truck.source`</sourcestyle></div>
+
+## Ferry{.slide_body_text_sm}
+<div style="position:absolute; top:5%; left:5%;">
+<slideheadstyle>Ferry Ridership: WSF Routes serving the PSRC Region</slideheadstyle>
+</div>
+
+<IMG style="position:absolute; top:2.5%; left:90%; width:96px; "SRC="`r trends.logo`">
+
+Overall ridership on Ferry routes operated by WSF in the PSRC region for the first eight months of 2021 is `r toString(round(ferry.ratio*100, 0))`% of the total ridership from 2019. The Bremerton to Seattle and Bainbridge Island to Seattle routes continue to have the greatest drop in ridership compared to 2019, a reflection of the commuter nature of those routes. <br><br><br>
+
+<div style="float: left; width: 100%;">
+`r ferry.volumes.chart`
+</div> 
+
+
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+<div style="position:absolute; bottom:4.0%; right:10%;"><sourcestyle>`r ferry.source`</sourcestyle></div>
+
+
+## Questions {data-background=X:/DSA/shiny-uploads/trends/rsc-jul21/images/rhs-slide-2400x800.jpg data-background-size=cover}
+
+<div style="position:absolute; top:85%; left:5%;">
+<transitionstyle>Questions? chelmann@psrc.org</transitionstyle>
+</div>
