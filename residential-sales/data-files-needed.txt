@@ -1,0 +1,22 @@
+Files need for Sales from Assessors (download from each county)
+
+King:
+EXTR_CondoComplex.csv
+EXTR_CondoUnit2.csv
+EXTR_LookUp.csv
+EXTR_ResBldg.csv
+EXTR_ResBldg.csv
+
+Kitsap:
+codes.txt
+Parcels.txt
+Residential_Sales_2015-2019.csv
+Residential_Sales_2017-2022.csv
+Residential_Sales_2017-2022.xlsx
+
+Pierce:
+improvement.txt
+sale.txt
+
+Snohomish:
+AllSales_20211006.csv
