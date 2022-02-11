@@ -1,0 +1,313 @@
+---
+title: "Puget Sound Trends"
+author: "Fall 2021 Updates"
+date: "September 24, 2021"
+output: 
+  powerpoint_presentation:
+    reference_doc: trends-psrc-template.pptx
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+
+library(knitr)
+
+source("process_data.R")
+
+```
+
+## Overview
+
+Topics covered in today's presentation:
+
+- Population 
+- Housing
+- Employment
+- Unemployment
+- Retail Sales
+- Airports
+- Transit
+- Congestion
+
+## We are a growing region
+
+![](images\\vision-2050-growth.png){width=50%}  
+
+# Population Trends  
+
+## Population Growth Continued Despite the Pandemic 
+
+```{r pop-growth-county-chart, echo=FALSE, fig.height=7, fig.width=15}
+annual.county.pop.chart
+```
+
+## Components of Population Change
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Annual population growth returned to levels last seen in 2013
+
+- In 2020-2021, population growth was equal between migration and natural increase.
+
+:::
+::: {.column}
+```{r pop-components-chart, echo=FALSE}
+region.pop.change.chart
+```
+:::
+::::::::::::::
+
+## Population Change by Regional Geography
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Over x% of new population growth since 2010 has been in Metro Cities
+
+- Less than x% of new population growth since 2010 have been in the unincorporated area 
+
+:::
+::: {.column}
+```{r pop-change-rgeo-chart, echo=FALSE}
+pop.rgeo.chart
+```
+:::
+::::::::::::::
+
+## Population in Metro Cities 
+```{r metro-pop-chart, echo=FALSE, fig.height=7, fig.width=15}
+metro.city.pop.chart
+```
+
+
+## Population in Core Cities 
+
+```{r core-pop-chart, echo=FALSE, fig.height=7, fig.width=15}
+core.city.pop.chart
+```
+
+## Population in High Capacity Transit Communities 
+
+```{r hct-pop-chart, echo=FALSE, fig.height=7, fig.width=15}
+hct.city.pop.chart
+```
+
+
+# Housing Trends
+
+## Housing Unit Change
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Region added xxx
+
+- Multi-family has accounted for ...
+
+:::
+::: {.column}
+```{r hu-change-chart, echo=FALSE}
+region.hu.chart
+```
+:::
+::::::::::::::
+
+## Housing Unit Change by Regional Geography
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Over x% of Housing Unit production since 2010 has been in Metro Cities
+
+- Less than x% of total housing units since 2010 have been constructed in the unincorporated area 
+
+:::
+::: {.column}
+```{r hu-change-rgeo-chart, echo=FALSE}
+hu.rgeo.chart
+```
+:::
+::::::::::::::
+
+## Median Home Sales Price
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- By the end of August, the median home sales price in the Seattle MSA exceeded $730,0000
+
+- Median prices have been increasing at a faster rate during the pandemic and have reached all time highs in the region.
+
+:::
+::: {.column}
+```{r median-home-cost-chart, echo=FALSE}
+region.mediansales.chart
+```
+:::
+::::::::::::::
+
+## Inventory is helping drive Cost
+
+:::::::::::::: {.columns}
+::: {.column}
+```{r home-sales-chart, echo=FALSE}
+region.homesales.chart
+```
+:::
+::: {.column}
+```{r home-inventory-chart, echo=FALSE}
+region.homeinventory.chart
+```
+:::
+::::::::::::::
+
+## Median Monthly Rent
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- By the end of August, the median rental cost in the Seattle MSA exceeded $2000 per month
+
+- After an initial decline in rental prices early in the pandemic, costs have increased over the first 8 months of 2021.
+
+:::
+::: {.column}
+```{r rental-cost-chart, echo=FALSE}
+region.rentals.chart
+```
+:::
+::::::::::::::
+
+
+# Employment Trends  
+
+## Job recovery is on-going
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- Current monthly job totals are ..
+
+- In 2021, there were .
+
+:::
+::: {.column}
+```{r total-jobs-chart, echo=FALSE}
+total.jobs.chart
+```
+:::
+::::::::::::::
+
+## Not all industries were impacted similarly by the Pandemic 
+
+```{r sector-jobs-chart, echo=FALSE, fig.height=7, fig.width=15}
+jobs.by.sector.chart
+```
+
+# Unemployment Trends
+
+## Initial Unemployment Claims since the Start of the Pandemic 
+
+```{r initial-claims-total-chart, echo=FALSE, fig.height=7, fig.width=15}
+initial.claims.chart
+```
+
+## Initial Unemployment Claims since the Start of the Pandemic 
+
+```{r initial-claims-share-chart, echo=FALSE, fig.height=7, fig.width=15}
+initial.claims.share.chart
+```
+
+## Continuing Unemployment Claims by Race
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- The highest .
+
+- The lowest .
+
+:::
+::: {.column}
+```{r unemployment-race-chart, echo=FALSE}
+ue.claims.race.chart
+```
+:::
+::::::::::::::
+
+## Continuing Unemployment Claims by Gender
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- The highest .
+
+- The lowest .
+
+:::
+::: {.column}
+```{r unemployment-gender-chart, echo=FALSE}
+ue.claims.gender.chart
+```
+:::
+::::::::::::::
+# Airport Trends
+
+## SeaTac Airport
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- In 2019, there were .
+
+- In 2021, there were .
+
+:::
+::: {.column}
+```{r seatac-chart, echo=FALSE}
+seatac.chart
+```
+:::
+::::::::::::::
+
+## Nations Airports
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- In 2019, there were .
+
+- In 2021, there were .
+
+:::
+::: {.column}
+```{r national-airport-chart, echo=FALSE}
+national.airports.chart
+```
+:::
+::::::::::::::
+
+
+# Roadway Congestion
+
+## Congestion is increasing but still not at 2019 levels
+
+:::::::::::::: {.columns}
+::: {.column}
+
+- In 2019, there were .
+
+- In 2021, there were .
+
+:::
+::: {.column}
+```{r severe-congestion-chart, echo=FALSE}
+severe.congestion.chart
+```
+:::
+::::::::::::::
+
+
+# Questions? \n chelmann@psrc.org
+

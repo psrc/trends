@@ -50,3 +50,6 @@ vignettes/*.pdf
 *.xlsx
 *.pptx
 *.docx
+/data/
+/images/
+/output/
