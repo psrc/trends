@@ -1,0 +1,100 @@
+---
+title: "Population Trends"
+author: "Puget Sound Regional Council"
+date: "12/2/2021"
+output: word_document
+---
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("process-data.R")
+```
+
+## Region Continued to Grow Despite a Global Pandemic
+
+The Central Puget Sound region grew by more than `r toString(format(region.delta, nsmall=0, big.mark=","))` people between April 1st 2020 and April 1st 2021. All four counties in the region grew with the largest growth occurring in King County. This data is based on the latest updates to jurisdiction level growth released by the Office of Financial Management on November 30, 2021. For more information on this data, please refer to [OFM](https://ofm.wa.gov/washington-data-research/population-demographics/population-estimates/april-1-official-population-estimates).
+
+```{r county-level-summary, echo=FALSE, fig.height = 5, fig.width = 7}
+county.growth
+```
+
+\newpage
+
+## Majority of Growth continues to be in the Incorporated Areas
+More than `r toString(format(round((incorporated.2021.delta/region.delta)*100,0), nsmall=0, big.mark=","))`% of the growth in the past year occurred in the incorporated cities and towns of the region.
+
+```{r incorporated-growth, echo=FALSE, fig.height = 5, fig.width = 7}
+incorporated.growth
+```
+
+\newpage
+
+## Growth by Regional Geography
+Approximately `r toString(format(metro.2021.delta+core.2021.delta, nsmall=0, big.mark=","))` people moved into the region's Metropolitan and Core cities in 2021, approximately `r toString(format(round(((metro.2021.delta+core.2021.delta)/region.delta)*100,0), nsmall=0, big.mark=","))`% of the total growth during the past year. 
+
+```{r rgeo-growth, echo=FALSE, fig.height = 5, fig.width = 7}
+rgeo.growth
+```
+
+\newpage
+
+## Top Ten Fastest Growing Places: Region
+
+The City of Seattle added the most people in 2021 in the entire Central Puget Sound region. In all, King County had `r toString(format(king.cities.top, nsmall=0, big.mark=","))` of the 10 fastest growing cities in the region followed by Snohomish County (`r toString(format(snohomish.cities.top, nsmall=0, big.mark=","))` cities) and Pierce County (`r toString(format(pierce.cities.top, nsmall=0, big.mark=","))` cities).
+
+```{r fastest-growing-places-region, echo=FALSE, fig.height = 5, fig.width = 7}
+top.ten.cities
+```
+
+\newpage
+
+## Fastest Growing Places: King County
+
+The City of Seattle added the most people in 2021 in the entire Central Puget Sound region
+
+```{r fastest-growing-places-king, echo=FALSE, fig.height = 5, fig.width = 7}
+top.ten.cities.king
+```
+
+\newpage
+
+## Fastest Growing Places: Kitsap County
+
+The City of Bremerton added the most people in 2021 in Kitsap County
+
+```{r fastest-growing-places-kitsap, echo=FALSE, fig.height = 5, fig.width = 7}
+top.ten.cities.kitsap
+```
+
+\newpage
+
+## Fastest Growing Places: Pierce County
+
+The City of Bonney Lake added the most people in 2021 in Pierce County
+
+```{r fastest-growing-places-pierce, echo=FALSE, fig.height = 5, fig.width = 7}
+top.ten.cities.pierce
+```
+
+\newpage
+
+## Fastest Growing Places: Snohomish County
+
+The City of Everett added the most people in 2021 in Snohomish County
+
+```{r fastest-growing-places-snohomish, echo=FALSE, fig.height = 5, fig.width = 7}
+top.ten.cities.snohomish
+```
+
+\newpage
+
+## Population Growth by City
+
+```{r city-table, echo=FALSE}
+city.growth.tbl
+```
+
+
+For more PSRC trends, please visit <https://www.psrc.org/puget-sound-trends>.
