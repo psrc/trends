@@ -53,3 +53,4 @@ vignettes/*.pdf
 /data/
 /images/
 /output/
+*.Rproj

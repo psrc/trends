@@ -22,7 +22,6 @@ get_ofm_postcensal_population <- function (ofm.url="https://ofm.wa.gov/sites/def
                                     "2010 Postcensal Estimate of Total Population","2020 Postcensal Estimate of Total Population"))) %>%
     dplyr::mutate(Variable = stringr::str_sub(Variable, 6, stringr::str_length(Variable)))
   
-  # Create a Regional Summary by Filter Type and then Join to Full OFM tibble
   region <- ofm %>%
     dplyr::filter(Filter <= 3) %>%
     dplyr::select(Filter, Variable, Year, Estimate) %>%
@@ -58,11 +57,22 @@ get_ofm_housing_units <- function (ofm.url="https://ofm.wa.gov/sites/default/fil
     dplyr::mutate(Variable = stringr::str_sub(Variable, 5, stringr::str_length(Variable))) %>%
     dplyr::mutate(Variable = stringr::str_trim(Variable, side = c("both"))) %>%
     dplyr::mutate(Variable = dplyr::case_when(
-      stringr::str_detect(Variable, "Mobile Home") ~ "Mobile Home",
-      stringr::str_detect(Variable, "One Unit Housing Units") ~ "Single-Family",
-      stringr::str_detect(Variable, "Two or More Housing Units") ~ "Multi-Family",
-      stringr::str_detect(Variable, "Total Housing Units") ~ "Total Housing Units")) %>%
-    dplyr::mutate(Data_Type = "Postcensal Estimates") 
+      stringr::str_detect(Variable, "Mobile Home") ~ "Mobile Home Units",
+      stringr::str_detect(Variable, "One Unit Housing Units") ~ "Single-Family Units",
+      stringr::str_detect(Variable, "Two or More Housing Units") ~ "Multi-Family Units",
+      stringr::str_detect(Variable, "Total Housing Units") ~ "Total Housing Units")) 
+  
+  region <- ofm %>%
+    dplyr::filter(Filter <= 3) %>%
+    dplyr::select(Filter, Variable, Year, Estimate) %>%
+    dplyr::group_by(Filter, Variable, Year) %>%
+    dplyr::summarize_all(sum) %>%
+    dplyr::mutate(County = "Region") %>%
+    dplyr::mutate(Jurisdiction = "Region") %>%
+    dplyr::mutate(Jurisdiction = ifelse(Filter == 2, "Unincorporated Region", Jurisdiction)) %>%
+    dplyr::mutate(Jurisdiction = ifelse(Filter == 3, "Incorporated Region", Jurisdiction))
+  
+  ofm <- dplyr::bind_rows(ofm,region) %>% dplyr::mutate(Data_Type = "Postcensal Estimates") 
     
  return(ofm) 
   
