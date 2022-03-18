@@ -1,0 +1,4 @@
+Images are stored on the server at:
+
+X:\DSA\shiny-uploads\trends\rsc-mar22\images
+
