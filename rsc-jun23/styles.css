@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&display=swap');
+
+body {
+  font-family: 'Poppins';
+  font-size: 14pt;
+  color: black;
+}
+
+h1 {
+  color: #00A7A0;
+  font-size: 28pt;
+}
+
+h2 {
+  color: #91268F;
+  font-size: 22pt;
+}
+
+h3 {
+  color: #8CC63E;
+  font-size: 16pt;
+}
+
+h4 {
+  color: #F05A28;
+  font-size: 14pt;
+}
+
+h4 {
+  color: #F05A28;
+  font-size: 14pt;
+}
+
+transitionstyle {
+  color: white;
+  font-weight: bold;
+  font-size: 36pt;
+}
+
+slideheadstyle {
+  color: #91268F;
+  font-weight: bold;
+  font-size: 22pt;
+}
+
+figheadstyle {
+  color: #BCBEC0;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
+sourcestyle {
+  color: #4C4C4C;
+  font-size: 10pt;
+}
+
+.slide_body_text_sm {
+  margin-top: 5px;
+  font-size: 12pt;
+  color: #4C4C4C;
+}
+
+slides>slide.title-slide {
+    background-image: url('bellevuelakewashington_3.jpg');
+    background-size: 100% 100%;
+}
+
+slides > slide.title-slide hgroup p {
+  color:white;
+}
+
+slides > slide.title-slide hgroup h2 {
+  color:white;
+}
+
+slides > slide.title-slide hgroup h1 {
+  color:white;
+}

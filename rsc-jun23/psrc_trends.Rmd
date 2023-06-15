@@ -1,0 +1,1191 @@
+---
+title: "Puget Sound Trends"
+author: "Regional Staff Committee"
+date: "June 15, 2023"
+output: 
+  ioslides_presentation:
+    widescreen: true
+    css: styles.css
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(echarts4r)
+library(psrcplot)
+
+knitr::opts_chunk$set(echo = FALSE)
+e_common(font_family = "Poppins")
+
+monthly_transit <- read_csv("data/month_transit.csv")
+
+ytd_transit <- read_csv("data/ytd_transit.csv")
+
+seatac_airport <-read_csv("data/seatac.csv")
+
+collisions <- read_csv("data/collision_data.csv", show_col_types = FALSE) %>%
+  mutate(injury_type = str_replace_all(injury_type, "Fatality", "Traffic Related Deaths")) %>%
+  mutate(injury_type = str_replace_all(injury_type, "Serious Injury", "Serious Injuries")) %>%
+  mutate(injury_rate_per_100k = round(injury_rate_per_100k,1)) %>%
+  mutate(collision_rate_per_100k = round(collision_rate_per_100k,1))
+
+ev <- read_csv("data/ev_by_county.csv")
+
+new_reg <- read_csv("data/new_registrations_by_county.csv")
+
+new_makes <- read_csv("data/new_evs_by_model.csv")
+
+modes <- read_csv("data/mode_share.csv")
+
+vmt <-read_csv("data/vmt-data.csv")
+
+homes <- read_csv("data/redfin_home_sales.csv") %>% mutate(date = lubridate::my(`Month of Period End`))
+
+tenure <- read_csv("data/housing_tenure.csv")
+
+rentals <- read_csv("data/Metro_zori_sm_month.csv") %>%
+  filter(RegionName == "Seattle, WA") %>%
+  select(-"RegionID", -"SizeRank", -"RegionType", -"StateName") %>%
+  pivot_longer(!RegionName, values_to = "estimate", names_to = "date") %>%
+  rename(geography="RegionName") %>%
+  mutate(date = lubridate::ymd(date)) %>%
+  mutate(year = paste0(lubridate::month(date, label=TRUE, abbr=FALSE), "-", lubridate::year(date))) %>%
+  mutate(estimate = round(estimate,0))
+
+jobs <- read_csv("data/jobs.csv") %>%
+  mutate(date = lubridate::ymd(date)) %>%
+  mutate(year = paste0(lubridate::month(date, label=TRUE, abbr=FALSE), "-", lubridate::year(date))) %>%
+  filter(lubridate::year(date) >= 2015) %>%
+  filter(year != "May-2023")
+
+industries <- jobs %>%
+  filter(geography=="Region" & variable != "Total Nonfarm") %>% 
+  select("variable") %>% 
+  distinct() %>% 
+  pull()
+
+unemployment <- read_csv("data/unemployment.csv") %>%
+  mutate(date = lubridate::mdy(date)) %>%
+  mutate(year = paste0(lubridate::month(date, label=TRUE, abbr=TRUE), "-", lubridate::day(date),"-",lubridate::year(date))) %>%
+  mutate(geography = str_to_title(geography)) %>%
+  filter(geography %in% c("King","Kitsap", "Pierce", "Snohomish"))
+  
+psrc.logo <- "data/psrc_logo.png"
+trends.logo <- "data/puget-sound-trends.png"
+question.background <- "data/rhs-slide-2400x800.jpg"
+
+fa_user <- "path://M256 288A144 144 0 1 0 256 0a144 144 0 1 0 0 288zm-94.7 32C72.2 320 0 392.2 0 481.3c0 17 13.8 30.7 30.7 30.7H481.3c17 0 30.7-13.8 30.7-30.7C512 392.2 439.8 320 350.7 320H161.3z"
+
+fa_wfh <- "path://M218.3 8.5c12.3-11.3 31.2-11.3 43.4 0l208 192c6.7 6.2 10.3 14.8 10.3 23.5H336c-19.1 0-36.3 8.4-48 21.7V208c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16v64c0 8.8 7.2 16 16 16h64V416H112c-26.5 0-48-21.5-48-48V256H32c-13.2 0-25-8.1-29.8-20.3s-1.6-26.2 8.1-35.2l208-192zM352 304V448H544V304H352zm-48-16c0-17.7 14.3-32 32-32H560c17.7 0 32 14.3 32 32V448h32c8.8 0 16 7.2 16 16c0 26.5-21.5 48-48 48H544 352 304c-26.5 0-48-21.5-48-48c0-8.8 7.2-16 16-16h32V288z"
+
+fa_bus <- "path://M224 0C348.8 0 448 35.2 448 80V96 416c0 17.7-14.3 32-32 32v32c0 17.7-14.3 32-32 32H352c-17.7 0-32-14.3-32-32V448H128v32c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32l0-32c-17.7 0-32-14.3-32-32V96 80C0 35.2 99.2 0 224 0zM64 128V256c0 17.7 14.3 32 32 32H352c17.7 0 32-14.3 32-32V128c0-17.7-14.3-32-32-32H96c-17.7 0-32 14.3-32 32zM80 400a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm288 0a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"
+
+fa_house <- "path://M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"
+
+#my_logo <- fontawesome::fa("bus-simple")
+```
+
+## Overview
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+Today's presentation will cover a variety of trends on:
+
+  1. Climate
+  2. Safety
+  3. Transit
+  4. Airport
+  5. Jobs
+  6. Housing And Rental Costs
+
+For more information on trends that PSRC generates, please visit <https://www.psrc.org/puget-sound-trends>
+
+# Climate Related Trends
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Electric Vehicle registrations are growing
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r ev-registrations}
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(3, ""),
+  
+    column(6, radioButtons("ev_toggle", label = NULL,
+                            choices = list("Total Registrations" = "total", 
+                                           "Share of All Registraions" = "share"),
+                            selected = "total",
+                            inline = TRUE)),
+    
+    column(3,"")
+    
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("ev_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+    ev %>%
+      filter(county == "Region" & metric == input$ev_toggle & 
+               !str_detect(variable, "Total") & !str_detect(variable, "Internal")) %>%
+      mutate(year = paste0(lubridate::month(date, label=TRUE, abbr=FALSE), "-", lubridate::year(date)))
+  })
+  
+  output$ev_plot <- renderEcharts4r({
+    df_filter() %>%
+      group_by(variable) %>%
+      e_charts(year) %>%
+      e_bar(estimate, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text="Electric Vehicle Registrations",
+              link="https://data.wa.gov/Transportation/Electric-Vehicle-Population-Size-History-By-County/3d5d-sdqb",
+              subtext=stringr::str_to_title(input$ev_toggle))
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Almost 1/4 of all new vehicle registrations were Electric or Hybrid last month
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r new-ev-registrations}
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(3, ""),
+  
+    column(6, radioButtons("new_ev_toggle", label = NULL,
+                            choices = list("Total New Registrations" = "estimate", 
+                                           "Share of All New Registraions" = "share"),
+                            selected = "estimate",
+                            inline = TRUE)),
+    
+    column(3,"")
+    
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("new_ev_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+    new_reg %>%
+      filter(geography == "Region") %>%
+      select("date", "variable", value = all_of(input$new_ev_toggle)) %>%
+      mutate(year = paste0(lubridate::month(date, label=TRUE, abbr=FALSE), "-", lubridate::year(date)))
+  })
+  
+  output$new_ev_plot <- renderEcharts4r({
+    df_filter() %>%
+      group_by(variable) %>%
+      e_charts(year) %>%
+      e_bar(value, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text="New Electric Vehicle Registrations",
+              link="https://data.wa.gov/Transportation/Title-Transactions-by-Month/u4cd-bc3x",
+              subtext=stringr::str_to_title(input$new_ev_toggle))
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## It seems like everyone makes an Electric Vehicle
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r ev-makes}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4,
+           sliderInput("ev_year", label = NULL, sep="", animate=FALSE, 
+                       min = 2017, max = 2023, 
+                       value = 2023)),
+    column(4, "")),
+  
+  fluidRow(
+    column(6, echarts4rOutput("bev_make_plot")),
+    column(6, echarts4rOutput("hev_make_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  bev_filter <- reactive({
+    new_makes %>% 
+      filter(metric == "Battery Electric Vehicle" & year==input$ev_year)
+  })
+  
+  hev_filter <- reactive({
+    new_makes %>% 
+      filter(metric == "Hybrid Electric Vehicle" & year==input$ev_year)
+  })
+  
+  output$bev_make_plot <- renderEcharts4r({
+    bev_filter() %>% 
+      rename(Manufacturer = "variable", Registrations="estimate") %>%
+      e_charts(Manufacturer) %>%
+      e_pie(Registrations, radius = c("50%", "70%")) %>% 
+      e_color(psrc_colors$pgnobgy_10) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip() %>%
+      e_title("Electric Vehicles",
+              link="https://data.wa.gov/Transportation/Title-Transactions-by-Month/u4cd-bc3x") %>%
+      e_legend(show = FALSE)
+
+  })
+  
+  output$hev_make_plot <- renderEcharts4r({
+    hev_filter() %>% 
+      rename(Manufacturer = "variable", Registrations="estimate") %>%
+      e_charts(Manufacturer) %>%
+      e_pie(Registrations, radius = c("50%", "70%")) %>% 
+      e_color(psrc_colors$pgnobgy_10) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip() %>%
+      e_title("Hybrid Electric Vehicles",
+              link="https://data.wa.gov/Transportation/Title-Transactions-by-Month/u4cd-bc3x") %>%
+      e_legend(show = FALSE)
+
+  })
+  
+  
+}
+
+shinyApp(ui, server)
+
+```
+
+## Vehicle Miles Traveled are still below Pre-Pandemic Levels
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r vmt}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4, radioButtons("vmt_toggle", label = NULL,
+                            choices = list("Total" = "Total", "Per Capita" = "per Capita"),
+                            selected = "per Capita",
+                            inline = TRUE)),
+    column(4, "")
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("vmt_plot"))
+  )
+
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+  vmt %>% 
+      filter(metric == "Observed VMT" & variable == input$vmt_toggle) %>%
+      mutate(year = as.character(data_year)) %>%
+      select("geography", "estimate", "year")
+  })
+  
+  output$vmt_plot <- renderEcharts4r({
+    df_filter() %>%
+      mutate(data_year = as.character(year)) %>%
+      group_by(geography) %>%
+      e_charts(x = year) %>%
+      e_line(estimate, smooth = FALSE) %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading()  %>%
+      e_legend(show = FALSE, bottom=0) %>% 
+      e_title(text = "DAILY Vehicle Miles Traveled",
+              link = "https://wsdot.wa.gov/about/transportation-data/travel-data/annual-mileage-and-travel-information",
+              subtext = stringr::str_to_title(input$vmt_toggle))
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Work from Home has increased - but rates differ by Race
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r wfh}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4,
+           radioButtons("wfh_toggle", label = NULL,
+                            choices = list("2019" = 2019, "2020" = 2021),
+                            selected = 2021,
+                            inline = TRUE)),
+    column(4, "")),
+  
+  fluidRow(
+    column(12, echarts4rOutput("wfh_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  wfh_filter <- reactive({
+    modes %>%
+      filter(year==input$wfh_toggle & variable=="Worked from Home") %>%
+      mutate(grouping = str_remove_all(grouping, " alone")) %>%
+      arrange(share) %>%
+      mutate(race= str_wrap(grouping, 20))
+  })
+  
+  output$wfh_plot <- renderEcharts4r({
+    wfh_filter() %>% 
+      group_by(race) %>%
+      e_charts(x=race) %>%
+      e_color(psrc_colors$gnbopgy_5) %>%
+      e_tooltip() %>%
+      e_grid(left = '20%') %>%
+      e_pictorial_(serie = "share", 
+                   symbol = fa_wfh,
+                   symbolRepeat = TRUE, z = -1,
+                   symbolSize = 30,
+                   legend = FALSE,
+                   name="Worked from Home") %>%
+      e_flip_coords() %>%
+      e_legend(show = FALSE) %>%
+      e_x_axis(splitLine=list(show = FALSE)) %>% 
+      e_y_axis(splitLine=list(show = FALSE),
+               axisPointer = list(show = FALSE)) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_title("Work from Home",
+              subtext="Source: US Census Bureau PUMS Data JWTRNS")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+# Safety Trends
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Traffic Related Deaths and Serious Injuries are increasing
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r region-collisions}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4, radioButtons("region_safety_toggle", label = NULL,
+                            choices = list("Total" = "injuries", "Rate per 100k people" = "injury_rate_per_100k"),
+                            selected = "injuries",
+                            inline = TRUE)),
+    column(4, "")
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("region_safety_plot"))
+  )
+
+)
+ 
+server <- function(input, output){
+  
+  collisions_filter <- reactive({
+  collisions %>% 
+      select("geography", "name", "year", "injury_type", metric=all_of(input$region_safety_toggle))
+  })
+  
+  output$region_safety_plot <- renderEcharts4r({
+    collisions_filter() %>%
+      filter(geography=="County" & name=="Region") %>%
+      mutate(data_year = as.character(year)) %>%
+      group_by(injury_type) %>%
+      e_charts(x = data_year) %>%
+      e_line(metric, smooth = FALSE) %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading()  %>%
+      e_legend(show = TRUE, bottom=0) %>% 
+      e_title(text="ANNUAL Traffic Related Deaths and Serious Injuries",
+              subtext="Source: Washington State Department of Transportation, Crash Data Division, Multi-Row data files (MRFF)")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Traffic Deaths Disproportionally Impact People of Color
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r racial-disparities}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4,
+           sliderInput("race_year", label = NULL, sep="", animate=FALSE, 
+                       min = min(collisions$year), max = 2021, 
+                       value = 2021)),
+    column(4, "")),
+  
+  fluidRow(
+    column(12, echarts4rOutput("racial_disparities_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  fatal_filter <- reactive({
+    collisions %>%
+      select("geography", "name", "year", "injury_type", fatality_rate="injury_rate_per_100k") %>%
+      filter(geography == "Race & Ethnicity" & injury_type == "Traffic Related Deaths" & year==input$race_year) %>%
+      arrange(fatality_rate) %>%
+      mutate(race= str_wrap(name, 15))
+  })
+  
+  output$racial_disparities_plot <- renderEcharts4r({
+    fatal_filter() %>% 
+    e_charts(x=race) %>%
+    e_color(psrc_colors$pgnobgy_5) %>%
+    e_tooltip() %>%
+    e_grid(left = '20%') %>%
+    e_pictorial_(serie = "fatality_rate", 
+                symbol = fa_user,
+                symbolRepeat = TRUE, z = -1,
+                symbolSize = 30,
+                legend = FALSE,
+                name="Fatality Rate per 100,000 people") %>%
+    e_flip_coords() %>%
+    e_legend(show = FALSE) %>%
+    e_x_axis(splitLine=list(show = FALSE)) %>% 
+    e_y_axis(splitLine=list(show = FALSE),
+             axisPointer = list(show = FALSE)) %>%
+    e_toolbox_feature("dataView") %>%
+    e_toolbox_feature("saveAsImage") %>%
+    e_title("ANNUAL Traffic Related Deaths",
+            subtext="Source: Washington Traffic Safety Commision, Washington State Coded Fatal Crash (CFC) analytical data files")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Men acccount for a large share of injuries and deaths
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r gender-disparities}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4,
+           sliderInput("gender_year", label = NULL, sep="", animate=FALSE, 
+                       min = min(collisions$year), max = max(collisions$year), 
+                       value = max(collisions$year))),
+    column(4, "")),
+  
+  fluidRow(
+    column(6, echarts4rOutput("gender_serious_plot")),
+    column(6, echarts4rOutput("gender_fatal_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  gender_fatal_filter <- reactive({
+    collisions %>% 
+      select("geography", "name", "year", "injury_type", "injuries") %>%
+      filter(geography == "Gender" & injury_type == "Traffic Related Deaths" & year==input$gender_year)
+  })
+  
+  gender_serious_filter <- reactive({
+    collisions %>% 
+      select("geography", "name", "year", "injury_type", "injuries") %>%
+      filter(geography == "Gender" & injury_type == "Serious Injuries" & year==input$gender_year)
+  })
+  
+  output$gender_fatal_plot <- renderEcharts4r({
+    gender_fatal_filter() %>% 
+      rename(`Traffic Related Deaths` = "injuries") %>%
+      e_charts(name) %>%
+      e_pie(`Traffic Related Deaths`, radius = c("50%", "70%")) %>% 
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip() %>%
+      e_title("ANNUAL Traffic Related Deaths",
+            subtext="Source: Washington Traffic Safety Commision, Washington State Coded Fatal Crash (CFC) analytical data files") %>%
+      e_legend(show = FALSE)
+
+  })
+  
+  output$gender_serious_plot <- renderEcharts4r({
+    gender_serious_filter() %>% 
+      rename(`Serious Injuries` = "injuries") %>%
+      e_charts(name) %>%
+      e_pie(`Serious Injuries`, radius = c("50%", "70%")) %>% 
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip() %>%
+      e_title("ANNUAL Serious Injuries",
+            subtext="Source: Washington Traffic Safety Commision, Washington State Coded Fatal Crash (CFC) analytical data files") %>%
+      e_legend(show = FALSE)
+
+  })
+  
+  
+}
+
+shinyApp(ui, server)
+
+```
+
+# Transit Trends
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Transit usage is Increasing but is still about 65% of Pre-Pandemic levels
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r region-transit}
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(4, ""),
+  
+    column(4, radioButtons("region_transit_toggle", label = NULL,
+                            choices = list("Boardings" = "Transit Boardings", 
+                                           "Hours" = "Transit Revenue-Hours",
+                                           "Miles" = "Transit Revenue-Miles"),
+                            selected = "Transit Boardings",
+                            inline = TRUE)),
+    
+    column(4, "")
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("region_transit_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+  monthly_transit %>% 
+      filter(geography == "Region" & variable == "Total Transit" & 
+               concept == input$region_transit_toggle & lubridate::year(date) >= 2019) %>%
+      mutate(display_date = paste0(month(date, label=TRUE, abbr=TRUE))) %>%
+      mutate(year = as.character(year(date)))
+  })
+  
+  output$region_transit_plot <- renderEcharts4r({
+    df_filter() %>%
+      group_by(year) %>%
+      e_charts(x = display_date) %>%
+      e_line(estimate, smooth = FALSE) %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>% 
+      e_title(text="MONTHLY Transit Statistics for PSRC Region",
+              link="https://www.transit.dot.gov/ntd/data-product/monthly-module-raw-data-release",
+              subtext=input$region_transit_toggle)
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Some Transit Modes are nearing pre-pandemic levels
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r mode-transit}
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(4, ""),
+  
+    column(4, radioButtons("transit_mode_toggle", label = NULL,
+                            choices = list("Boardings" = "Transit Boardings", 
+                                           "Hours" = "Transit Revenue-Hours",
+                                           "Miles" = "Transit Revenue-Miles"),
+                            selected = "Transit Boardings",
+                            inline = TRUE)),
+    
+    column(4,"")
+    
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("transit_mode_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+    ytd_transit %>%
+      filter(geography == "Region" & concept == input$transit_mode_toggle & 
+               year >= 2019 & variable != "Total Transit") %>%
+      mutate(year = as.character(year)) 
+  })
+  
+  output$transit_mode_plot <- renderEcharts4r({
+    df_filter() %>%
+      group_by(variable) %>%
+      e_charts(year) %>%
+      e_bar(estimate, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text="YTD Transit Statistics by Mode",
+              link="https://www.transit.dot.gov/ntd/data-product/monthly-module-raw-data-release",
+              subtext=input$transit_mode_toggle)
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## A larger share of People of Color tend to use Transit 
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r transit-ms}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4,
+           radioButtons("transit_ms_toggle", label = NULL,
+                            choices = list("2019" = 2019, "2021" = 2021),
+                            selected = 2021,
+                            inline = TRUE)),
+    column(4, "")),
+  
+  fluidRow(
+    column(12, echarts4rOutput("transit_ms_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  transit_ms_filter <- reactive({
+    modes %>%
+      filter(year==input$transit_ms_toggle & variable=="Transit") %>%
+      mutate(grouping = str_remove_all(grouping, " alone")) %>%
+      arrange(share) %>%
+      mutate(race= str_wrap(grouping, 20))
+  })
+  
+  output$transit_ms_plot <- renderEcharts4r({
+    transit_ms_filter() %>% 
+      group_by(race) %>%
+      e_charts(x=race) %>%
+      e_color(psrc_colors$obgnpgy_5) %>%
+      e_tooltip() %>%
+      e_grid(left = '20%') %>%
+      e_pictorial_(serie = "share", 
+                   symbol = fa_bus,
+                   symbolRepeat = TRUE, z = -1,
+                   symbolSize = 30,
+                   legend = FALSE,
+                   name="Transit") %>%
+      e_flip_coords() %>%
+      e_legend(show = FALSE) %>%
+      e_x_axis(splitLine=list(show = FALSE)) %>% 
+      e_y_axis(splitLine=list(show = FALSE),
+               axisPointer = list(show = FALSE)) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_title("Transit",
+              subtext="Source: US Census Bureau PUMS Data JWTRNS")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+# Airport Trends
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Passengers have returned to the Airport
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r seatac-passengers}
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(4, ""),
+  
+    column(4, radioButtons("seatac_toggle", label = NULL,
+                            choices = list("Passengers" = "PASSENGER GRAND TOTAL", 
+                                           "Air Cargo" = "CARGO GRAND TOTAL"),
+                            selected = "PASSENGER GRAND TOTAL",
+                            inline = TRUE)),
+    
+    column(4, "")
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("seatac_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+  seatac_airport %>% 
+      filter(variable == input$seatac_toggle) %>%
+      mutate(display_date = paste0(month(data_day, label=TRUE, abbr=TRUE))) %>%
+      select("variable", "display_date", "estimate", "year")
+  })
+  
+  output$seatac_plot <- renderEcharts4r({
+    df_filter() %>%
+      group_by(year) %>%
+      e_charts(x = display_date) %>%
+      e_line(estimate, smooth = FALSE) %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text="MONTHLY SEA Airport Statistics", link="https://www.portseattle.org/page/airport-statistics",
+              subtext=input$seatac_toggle)
+
+  })
+}
+
+shinyApp(ui, server)
+
+
+
+
+
+```
+
+## Both Domestic & International Travel are Rebounding
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r airport-breakout}
+
+ui <- fluidPage(
+
+  fluidRow(
+    column(6, echarts4rOutput("air_passengers_plot")),
+    column(6, echarts4rOutput("air_cargo_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  air_passengers_filter <- reactive({
+    seatac_airport %>% 
+      filter(variable %in% c("Subtotal - Domestic Passengers", "Subtotal - International Passengers")) %>%
+      group_by(year, variable) %>%
+      summarise(Passengers = sum(estimate)) %>%
+      as_tibble() %>%
+      mutate(variable = case_when(
+        str_detect(variable, "Domestic") ~ "Domestic",
+        str_detect(variable, "International") ~ "International")) %>%
+      mutate(year = as.character(year))
+  })
+  
+  air_cargo_filter <- reactive({
+    seatac_airport %>% 
+      filter(variable %in% c("Subtotal - Domestic Air Freight", 
+                             "Subtotal - International Air Freight")) %>%
+      group_by(year, variable) %>%
+      summarise(Cargo = sum(estimate)) %>%
+      as_tibble() %>%
+      mutate(variable = case_when(
+        str_detect(variable, "Domestic") ~ "Domestic",
+        str_detect(variable, "International") ~ "International")) %>%
+      mutate(year = as.character(year))
+  })
+  
+  output$air_passengers_plot <- renderEcharts4r({
+    air_passengers_filter() %>%
+      group_by(variable) %>%
+      e_charts(year) %>%
+      e_bar(Passengers, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text="Passengers (total enplanements)",
+              link="https://www.portseattle.org/page/airport-statistics")
+
+  })
+  
+  output$air_cargo_plot <- renderEcharts4r({
+    air_cargo_filter() %>%
+      group_by(variable) %>%
+      e_charts(year) %>%
+      e_bar(Cargo, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text="Cargo (metric Tons)",
+              link="https://www.portseattle.org/page/airport-statistics")
+
+  })
+  
+  
+}
+
+shinyApp(ui, server)
+
+```
+
+# Employment Trends
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Regional Employment is slightly above pre-pandemic levels
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r region-jobs}
+
+ui <- fluidPage(
+
+  fluidRow(
+    column(12, echarts4rOutput("region_jobs_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  output$region_jobs_plot <- renderEcharts4r({
+    jobs %>%
+      filter(variable == "Total Nonfarm") %>%
+      group_by(geography) %>%
+      e_charts(x = year) %>%
+      e_line(estimate, smooth = FALSE) %>%
+      e_color(psrc_colors$obgnpgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading()  %>%
+      e_legend(show = TRUE, bottom=0) %>% 
+      e_title(text = "Wage and Salary Employment",
+              link = "https://media.esd.wa.gov/esdwa/Default/ESDWAGOV/labor-market-info/Libraries/Economic-reports/Washington-employment-estimates/2023/WA-QB-historical-NSA-rounded-left0623.xlsx")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Not all Employment Sectors have recovered
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r sector-jobs}
+
+ui <- fluidPage(
+  
+  fluidRow(
+  
+    column(12, selectInput("industry_toggle", 
+                          label = NULL,
+                          choices = industries))
+  ),
+
+  fluidRow(
+    column(12, echarts4rOutput("industry_jobs_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+    jobs %>%
+      filter(geography == "Region" & variable == input$industry_toggle) 
+  })
+  
+  output$industry_jobs_plot <- renderEcharts4r({
+    df_filter() %>%
+      e_charts(year) %>%
+      e_bar(estimate, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = FALSE, bottom=0) %>%
+      e_title(text = paste0("Wage and Salary Employment: ", input$industry_toggle),
+              link = "https://media.esd.wa.gov/esdwa/Default/ESDWAGOV/labor-market-info/Libraries/Economic-reports/Washington-employment-estimates/2023/WA-QB-historical-NSA-rounded-left0623.xlsx")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Unemployment claims have risen slightly in 2023
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r unemployment}
+
+ui <- fluidPage(
+  
+  fluidRow(
+    column(12, echarts4rOutput("unemployment_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  output$unemployment_plot <- renderEcharts4r({
+    unemployment %>%
+      group_by(geography) %>%
+      e_charts(year) %>%
+      e_bar(claims, stack = "grp") %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading() %>%
+      e_legend(show = TRUE, bottom=0) %>%
+      e_title(text = "WEEKLY Initial Unemployment Claims",
+              link = "https://esd.wa.gov/labormarketinfo/unemployment-insurance-data")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+# Housing And Rental Cost Trends
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+
+## Home Prices are still historically high but have declined
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r home-sales}
+
+ui <- fluidPage(
+  fluidRow(
+    
+    column(4, ""),
+  
+    column(4, radioButtons("home_sales_toggle", label = NULL,
+                            choices = list("Price" = "price", 
+                                           "Sales" = "sales",
+                                           "Inventory" = "inventory"),
+                            selected = "price",
+                            inline = TRUE)),
+    
+    column(4, "")
+  ),
+  
+  fluidRow(
+    column(12, echarts4rOutput("home_sales_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  df_filter <- reactive({
+    homes %>%
+      mutate(year = paste0(lubridate::month(date, label=TRUE, abbr=FALSE), "-", lubridate::year(date))) %>%
+      select("year", geography="Region", estimate=all_of(input$home_sales_toggle))
+  })
+  
+  output$home_sales_plot <- renderEcharts4r({
+    df_filter() %>%
+      mutate(data_year = as.character(year)) %>%
+      group_by(geography) %>%
+      e_charts(x = year) %>%
+      e_line(estimate, smooth = FALSE) %>%
+      e_color(psrc_colors$pgnobgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading()  %>%
+      e_legend(show = TRUE, bottom=0) %>% 
+      e_title(text = "Home Sales",
+              link = "https://www.redfin.com/news/data-center/",
+              subtext = stringr::str_to_title(input$home_sales_toggle))
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## There are noticable differences in Home Ownership by Race
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r tenure}
+
+ui <- fluidPage(
+  fluidRow(
+    column(4, ""),
+    column(4,
+           radioButtons("tenure_toggle", label = NULL,
+                            choices = list("2019" = 2019, "2021" = 2021),
+                            selected = 2021,
+                            inline = TRUE)),
+    column(4, "")),
+  
+  fluidRow(
+    column(12, echarts4rOutput("tenure_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  tenure_filter <- reactive({
+    tenure %>%
+      filter(year==input$tenure_toggle & variable=="Own") %>%
+      mutate(grouping = str_remove_all(grouping, " alone")) %>%
+      mutate(grouping = str_remove_all(grouping, " Alone")) %>%
+      arrange(share) %>%
+      mutate(race= str_wrap(grouping, 25))
+  })
+  
+  output$tenure_plot <- renderEcharts4r({
+    tenure_filter() %>% 
+      group_by(race) %>%
+      e_charts(x=race) %>%
+      e_color(psrc_colors$gnbopgy_5) %>%
+      e_tooltip() %>%
+      e_grid(left = '20%') %>%
+      e_pictorial_(serie = "share", 
+                   symbol = fa_house,
+                   symbolRepeat = TRUE, z = -1,
+                   symbolSize = 30,
+                   legend = FALSE,
+                   name="Home Ownership") %>%
+      e_flip_coords() %>%
+      e_legend(show = FALSE) %>%
+      e_x_axis(splitLine=list(show = FALSE)) %>% 
+      e_y_axis(splitLine=list(show = FALSE),
+               axisPointer = list(show = FALSE)) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_title("Home Ownership",
+              subtext="Source: US Census Bureau PUMS Data TEN")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+## Despite increased units, Rental Prices are still increasing
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+```{r home-rentals}
+
+ui <- fluidPage(
+
+  fluidRow(
+    column(12, echarts4rOutput("home_rentals_plot"))
+  )
+  
+)
+ 
+server <- function(input, output){
+  
+  output$home_rentals_plot <- renderEcharts4r({
+    rentals %>%
+      e_charts(x = year) %>%
+      e_line(estimate, smooth = FALSE) %>%
+      e_color(psrc_colors$obgnpgy_5) %>%
+      e_toolbox_feature("dataView") %>%
+      e_toolbox_feature("saveAsImage") %>%
+      e_tooltip(trigger = "axis") %>%
+      e_x_axis(axisTick=list(show = FALSE)) %>%
+      e_show_loading()  %>%
+      e_legend(show = FALSE, bottom=0) %>% 
+      e_title(text = "Rental Cost",
+              link = "https://www.zillow.com/research/data/")
+
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+
+##
+<IMG style="position:absolute; bottom:2.5%; left:5%; width:192px; "SRC="`r psrc.logo`">
+![](data/rhs-slide-2400x800.jpg){#id .class width=100% height=100%}
+<div style="position:absolute; top:58%; left:15%;">
+<transitionstyle>Questions? chelmann@psrc.org</transitionstyle>
+</div>

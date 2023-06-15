@@ -40,17 +40,8 @@ vignettes/*.pdf
 
 *.html
 
-# Image files
-*.jpg
-*.png
-
 # Data Files
-*.csv
-*.xls
-*.xlsx
 *.pptx
 *.docx
-/data/
-/images/
 /output/
 *.Rproj
